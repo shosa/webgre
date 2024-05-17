@@ -143,7 +143,7 @@ include BASE_PATH . '/includes/header.php';
     foreach ($laboratori as $laboratorio) { ?>
         <h2><?php echo $laboratorio; ?></h2>
         <div class="table-responsive">
-            <table class="table table-striped table-bordered table-condensed">
+            <table class="table table-striped table-bordered table-condensed table-hover">
                 <thead>
                     <tr>
                         <th style="text-align:center;" width="0.5%"></th>

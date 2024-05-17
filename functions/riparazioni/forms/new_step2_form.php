@@ -217,9 +217,9 @@
                 </div>
             </div>
         </div>
-        <div class="form-group text-center">
+        <div class="form-group floating-button">
             <label></label>
-            <button type="submit" class="btn btn-warning">Salva <span class="glyphicon glyphicon-send"></span></button>
+            <button type="submit" class="btn btn-warning btn-lg">Salva <i class="fas fa-save"></i></button>
         </div>
     </div>
 </fieldset>

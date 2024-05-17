@@ -11,8 +11,8 @@
             <input type="text" name="commessa" value="" placeholder="Inserisci la commessa interessata"
                 class="form-control" id="commessa">
         </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-primary">AVANTI</button>
+        <div class="form-group floating-button">
+            <button type="submit" class="btn btn-primary btn-lg">AVANTI</button>
         </div>
     </form>
 </fieldset>

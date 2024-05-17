@@ -81,7 +81,7 @@
             </div>
         </div>
     </div>
-    <div class="form-group text-center">
-        <button type="submit" class="btn btn-primary">INIZIA TEST <i class="fas fa-play"></i></button>
+    <div class="form-group floating-button">
+        <button type="submit" class="btn btn-primary btn-lg">INIZIA TEST <i class="fas fa-play"></i></button>
     </div>
 </fieldset>
