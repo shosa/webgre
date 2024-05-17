@@ -47,13 +47,17 @@ $new_testid = $max_testid + 1;
 <div id="page-wrapper">
     <div class="row">
         <div class="col-lg-12">
-            <h2 class="page-header page-action-links text-center"style="padding:5px; background-color:orange;border-radius:10px;color:White;"><?php echo $descrizioneLinea["descrizione"];?></h2>
+            <h2 class="page-header page-action-links text-center"
+                style="padding:5px; background-color:orange;border-radius:10px;color:White;">
+                <?php echo $descrizioneLinea["descrizione"]; ?>
+            </h2>
             <h2 class="page-header page-action-links text-left">Nuovo Test #<?php echo $new_testid; ?></h2>
         </div>
-
-
     </div>
     <hr>
+    <h4 class="page-header page-action-links text-left" style="color:red;">
+      ** Controllare il riepilogo prima di procedere, andando avanti l'operazione di controllo sarà registrata.
+    </h4>
     <form class="form" action="" method="post" id="customer_form" enctype="multipart/form-data">
         <?php include_once ('forms/add_form.php'); ?>
     </form>
