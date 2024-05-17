@@ -1,0 +1,35 @@
+/* Stili per il gradiente e l'ombra */
+body {
+    background: linear-gradient(0deg, #ffffff 0%, #E6E6FA 100%);
+    background-attachment: fixed;
+    /* Effetto parallasse */
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+    /* Ombra sotto la navbar */
+}
+
+
+body.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+.btn-primary {
+    background-color: #6610f2;
+    border: #6610f2;
+}
+
+.card {
+    box-shadow: 9px 10px 31px -27px rgba(0, 0, 0, 0.75);
+}
+
+/* Aggiungi stili personalizzati qui */
+.card-body {
+    text-align: center;
+}
+
+.card-title {
+    margin-bottom: 10px;
+}

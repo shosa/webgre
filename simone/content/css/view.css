@@ -1,0 +1,55 @@
+.grid-img {
+    height: 200px;
+    /* Altezza fissa per le immagini della griglia */
+    object-fit: cover;
+    /* Mantiene le proporzioni dell'immagine */
+}
+
+/* Stile per il riepilogo della qualità */
+.quality-summary {
+    text-align: center;
+}
+
+.quality-summary i {
+    color: #007bff;
+    /* Colore dell'icona, lo stesso del bottone Bootstrap */
+}
+
+.quality-summary p {
+    margin-top: 0.5rem;
+}
+
+/* Stili per il gradiente e l'ombra */
+body {
+    background: linear-gradient(0deg, #ffffff 0%, #E6E6FA 100%);
+    background-attachment: fixed;
+    /* Effetto parallasse */
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+    /* Ombra sotto la navbar */
+}
+
+body {
+    opacity: 0;
+    transition: opacity 0.5s;
+
+}
+
+/* Aggiungi la classe per mostrare l'effetto fade-in */
+.fade-in {
+    opacity: 1;
+}
+
+.bookingBtn {
+
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px !important;
+
+}
+.btn-primary {
+    background-color: #6610f2;
+    border: #6610f2;
+}
