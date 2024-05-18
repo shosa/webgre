@@ -27,6 +27,7 @@
     }
 }
 
-.table-hover tr:hover {
-    background-color: rgb(255, 244, 183) !important;
+.table tbody tr:hover {
+    border: solid 2pt rgb(36, 193, 236) !important;
+    border-radius: 10x !important;
 }
