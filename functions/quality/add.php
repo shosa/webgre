@@ -19,10 +19,12 @@ $informazione = $db->getOne("dati");
 if (!$informazione) {
     die('Informazioni non trovate');
 }
-
+$operatore = strtoupper($_SESSION['username']);
+$data = date('d/m/Y');
+$orario = date('H:i');
 $db->where('sigla', $informazione["Ln"]);
 $descrizioneLinea = $db->getOne("linee");
-
+$nomeLinea = $descrizioneLinea["descrizione"];
 // Calcolo del nuovo valore per id
 $db->orderBy("ID", "DESC");
 $max_testid = $db->getValue("cq_testid", "MAX(ID)");
@@ -36,7 +38,7 @@ require_once BASE_PATH . '/includes/header.php';
         <div class="col-lg-12">
             <h2 class="page-header page-action-links text-center"
                 style="padding:5px; background-color:orange;border-radius:10px;color:White;">
-                <?php echo htmlspecialchars($descrizioneLinea["descrizione"], ENT_QUOTES, 'UTF-8'); ?>
+                <?php echo $nomeLinea; ?>
             </h2>
             <h2 class="page-header page-action-links text-left">Nuovo Test #<?php echo $new_testid; ?></h2>
         </div>
@@ -105,27 +107,31 @@ require_once BASE_PATH . '/includes/header.php';
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="utente" class="form-label">Operatore</label>
-                            <input name="utente"
-                                value="<?php echo htmlspecialchars(strtoupper($_SESSION['username']), ENT_QUOTES, 'UTF-8'); ?>"
-                                class="form-control" type="text" readonly>
+                            <input name="utente" value="<?php echo $operatore; ?>" class="form-control" type="text"
+                                readonly>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="data" class="form-label">Data</label>
-                            <input type="text" name="data" value="<?php echo date('d/m/Y'); ?>" placeholder="DD/MM/YYYY"
+                            <input type="text" name="data" value="<?php echo $data; ?>" placeholder="DD/MM/YYYY"
                                 class="form-control" id="data" readonly>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="orario" class="form-label">Orario</label>
-                            <input type="text" name="orario" value="<?php echo date('H:i'); ?>" class="form-control"
+                            <input type="text" name="orario" value="<?php echo $orario; ?>" class="form-control"
                                 id="orario" readonly>
                         </div>
                     </div>
                 </div>
             </div>
+            <input type="hidden" name="nomeLinea" value="<?php echo $nomeLinea; ?>">
+            <input type="hidden" name="operatore" value="<?php echo $operatore; ?>">
+            <input type="hidden" name="data" value="<?php echo $data; ?>">
+            <input type="hidden" name="orario" value="<?php echo $orario; ?>">
+            <input type="hidden" name="new_testid" value="<?php echo $new_testid; ?>">
             <div class="form-group floating-button">
                 <button type="submit" class="btn btn-primary btn-lg">INIZIA TEST <i class="fas fa-play"></i></button>
             </div>
@@ -133,13 +139,5 @@ require_once BASE_PATH . '/includes/header.php';
     </form>
 </div>
 
-<script>
-    document.getElementById('customer_form').addEventListener('submit', function (event) {
-        event.preventDefault();
-        var cartellino = document.getElementById('cartellino').value;
-
-        window.location.href = 'cqtest?cartellino=' + encodeURIComponent(cartellino);
-    });
-</script>
 
 <?php include_once BASE_PATH . '/includes/footer.php'; ?>

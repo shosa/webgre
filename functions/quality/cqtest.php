@@ -6,13 +6,18 @@ require_once BASE_PATH . '/includes/auth_validate.php';
 $db = getDbInstance();
 
 // Recupera la variabile cartellino dall'URL
-$cartellino = filter_input(INPUT_GET, 'cartellino', FILTER_UNSAFE_RAW);
-
+$cartellino = filter_input(INPUT_POST, 'cartellino', FILTER_UNSAFE_RAW);
+$nomeLinea = filter_input(INPUT_POST, 'nomeLinea', FILTER_UNSAFE_RAW);
+$new_testid = filter_input(INPUT_POST, 'new_testid', FILTER_UNSAFE_RAW);
+$orario   = filter_input(INPUT_POST, 'orario', FILTER_UNSAFE_RAW);
+$data   = filter_input(INPUT_POST, 'data', FILTER_UNSAFE_RAW);
+$operatore   = filter_input(INPUT_POST, 'operatore', FILTER_UNSAFE_RAW);
 // Ottiene l'informazione dalla tabella 'dati'
 $db->where('Cartel', $cartellino);
 $informazione = $db->getOne("dati");
-$orario = date('H:i');
 
+$cartellino = $informazione["Cartel"];
+$commessa = $informazione["Commessa Cli"];
 // Ottiene le opzioni per il menu a tendina 'CALZATA' dalla tabella 'id_numerate'
 $calzateOptions = [];
 if (!empty($informazione["Nu"])) {
@@ -63,33 +68,52 @@ require_once BASE_PATH . '/includes/header.php';
 </style>
 
 <div id="page-wrapper">
-    <div class="col-lg-12">
-        <h2 class="page-header page-action-links text-left">**Nuovo Test**
-            <span style="background-color:#ededed;padding:5px;border-radius:10px;margin:5px;">
-                (Cartellino: <?php echo htmlspecialchars($informazione["Cartel"], ENT_QUOTES, 'UTF-8'); ?>
-                - Commessa: <?php echo htmlspecialchars($informazione["Commessa Cli"], ENT_QUOTES, 'UTF-8'); ?>)
-            </span><span class="page-header page-action-links text-right"
-                style="background-color:orange; padding:5px;border-radius:10px;color:White;margin:5px;"><?php echo $orario ?></span>
-        </h2>
+    <div class="row">
+        <div class="col-lg-12">
+            <h2 class="page-header page-action-links text-center"
+                style="padding:5px; background-color:orange;border-radius:10px;color:White;">
+                <?php echo $nomeLinea; ?>
+            </h2>
+        </div>
+        <div class="col-lg-6">
+            <h2 class="page-header  text-left">Nuovo Test #<?php echo $new_testid; ?></h2>
+        </div>
+        <div class="col-lg-6 text-right" style="font-size:20pt;">
+            <span class="badge bg-light" style="margin-right: 10px;">
+                Cartellino: <?php echo $cartellino; ?>
+            </span>
+            <span class="badge bg-light">
+                Commessa: <?php echo $commessa; ?>
+            </span>
+            <span class="badge bg-primary text-white" style="margin-left: 10px;">
+                <?php echo $data ?>
+            </span>
+            <span class="badge bg-success text-white" style="margin-left: 10px;">
+                <?php echo $orario ?>
+            </span>
+            <span class="badge bg-danger text-white" style="margin-left: 10px;">
+                <?php echo $operatore ?>
+            </span>
+        </div>
     </div>
     <hr>
 
-    <form action="process_test.php" method="post" id="test_form">
-        <input type="hidden" name="cartellino"
-            value="<?php echo htmlspecialchars($cartellino, ENT_QUOTES, 'UTF-8'); ?>">
+    <form action="process_save.php" method="post" id="test_form">
+
         <div class="table-responsive">
             <table class="table table-bordered" id="test_table">
                 <thead class="table-info">
-                    <tr">
+                    <tr>
                         <th width="10%">CALZATA</th>
                         <th width="40%">TEST</th>
                         <th width="40%">ANNOTAZIONI</th>
                         <th width="10%">ESITO</th>
-                        </tr>
+                    </tr>
                 </thead>
                 <tbody>
                     <?php for ($i = 0; $i < 5; $i++): ?>
                         <tr data-row-id="<?php echo $i; ?>">
+
                             <td>
                                 <select name="calzata[]" class="form-control">
                                     <option value=""></option>
@@ -118,6 +142,8 @@ require_once BASE_PATH . '/includes/header.php';
                                     <i class="fas fa-times-circle"></i>
                                 </button>
                                 <input type="hidden" name="esito[]" class="esito-input">
+                                <input type="text" value="<?php echo $cartellino; ?>" name="cartellino" hidden>
+                                <input type="text" value="<?php echo $commessa; ?>" name="commessa" hidden>
                             </td>
                             <input type="hidden" name="row_ids[]" class="row-id-input">
                         </tr>
@@ -126,8 +152,8 @@ require_once BASE_PATH . '/includes/header.php';
             </table>
         </div>
 
-        <div class="form-group text-center">
-            <button type="submit" class="btn btn-primary">Salva</button>
+        <div class="form-group text-center floating-button">
+            <button type="submit" class="btn btn-primary btn-lg">Salva <i class="fad fa-save"></i></button>
         </div>
     </form>
 </div>
@@ -153,7 +179,6 @@ require_once BASE_PATH . '/includes/header.php';
         </div>
     </div>
 </div>
-
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -211,6 +236,7 @@ require_once BASE_PATH . '/includes/header.php';
             });
         });
     });
+
     function handleEsitoButtonClick() {
         // Rimuove la classe attiva da tutti i pulsanti
         var esitoButtons = this.parentNode.querySelectorAll('.esito-btn');
@@ -262,41 +288,7 @@ require_once BASE_PATH . '/includes/header.php';
             });
         });
     });
-    document.getElementById('save_button').addEventListener('click', function () {
-        var formData = new FormData();
-        var rows = document.querySelectorAll('#test_table tbody tr');
 
-        rows.forEach(function (row) {
-            var rowId = row.getAttribute('data-row-id');
-            var calzata = row.querySelector('select[name="calzata[]"]').value;
-            var test = row.querySelector('input[name="test[]"]').value;
-            var note = row.querySelector('textarea[name="note[]"]').value;
-            var esito = row.querySelector('.esito-btn.active').getAttribute('data-value');
-
-            formData.append('row_ids[]', rowId);
-            formData.append('calzata[]', calzata);
-            formData.append('test[]', test);
-            formData.append('note[]', note);
-            formData.append('esito[]', esito);
-        });
-
-        fetch('process_save.php', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Dati salvati con successo!');
-                } else {
-                    alert('Si è verificato un errore durante il salvataggio dei dati.');
-                }
-            })
-            .catch(error => {
-                console.error('Errore:', error);
-                alert('Si è verificato un errore durante il salvataggio dei dati.');
-            });
-    });
 </script>
 
 <?php include_once BASE_PATH . '/includes/footer.php'; ?>
