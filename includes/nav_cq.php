@@ -10,19 +10,19 @@
                     Nuova</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="../../functions/quality/records"><i class="fad fa-folder-tree"></i>
+                <a class="nav-link" href="#"><i class="fad fa-folder-tree"></i>
                     Consulta
                     <span class="badge badge-danger">New</span></a>
 
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="../../functions/quality/charts"><i class="fad fa-chart-pie"></i>
+                <a class="nav-link" href="#"><i class="fad fa-chart-pie"></i>
                     Reportistica</a>
             </li>
             <!-- INIZIO PARTE VISIBILE SOLO ALL'AMMINISTRAZIONE -->
             <?php if ($_SESSION["admin_type"] !== "admin"): ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="../../functions/quality/admin"><i class="fad fa-list fa-fw"></i>
+                    <a class="nav-link" href="#"><i class="fad fa-list fa-fw"></i>
                         Elenco</a>
                 </li>
             <?php endif; ?>
