@@ -22,6 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Controlla se il valore della calzata non è vuoto
         if (!empty($_POST['calzata'][$i])) {
             $data = array(
+                'reparto' => $_POST['reparto'],
                 'cartellino' => $_POST['cartellino'],
                 'commessa' => $_POST['commessa'],
                 'calzata' => $_POST['calzata'][$i],
@@ -29,6 +30,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 'note' => $_POST['note'][$i],
                 'esito' => $_POST['esito'][$i]
             );
+
+            // Debug: verifica il contenuto dell'array $data
+            error_log('Dati inserimento: ' . print_r($data, true));
 
             // Esegui l'istruzione SQL INSERT utilizzando l'istanza di mysqlidb
             $last_id = $db->insert('cq_records', $data);
@@ -43,7 +47,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 }
-
 
 require_once BASE_PATH . '/includes/header.php';
 ?>
@@ -87,8 +90,6 @@ require_once BASE_PATH . '/includes/header.php';
     }, 2000);
 </script>
 
-
-
 <div id="page-wrapper">
     <div class="confirmation">
         <?php if ($insert_success): ?>
@@ -101,7 +102,6 @@ require_once BASE_PATH . '/includes/header.php';
             <div class="spinner" style="border-left-color: red;"></div>
         <?php endif; ?>
     </div>
-
 </div>
 
 <?php include_once BASE_PATH . '/includes/footer.php'; ?>

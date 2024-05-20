@@ -9,9 +9,9 @@ $db = getDbInstance();
 $cartellino = filter_input(INPUT_POST, 'cartellino', FILTER_UNSAFE_RAW);
 $nomeLinea = filter_input(INPUT_POST, 'nomeLinea', FILTER_UNSAFE_RAW);
 $new_testid = filter_input(INPUT_POST, 'new_testid', FILTER_UNSAFE_RAW);
-$orario   = filter_input(INPUT_POST, 'orario', FILTER_UNSAFE_RAW);
-$data   = filter_input(INPUT_POST, 'data', FILTER_UNSAFE_RAW);
-$operatore   = filter_input(INPUT_POST, 'operatore', FILTER_UNSAFE_RAW);
+$orario = filter_input(INPUT_POST, 'orario', FILTER_UNSAFE_RAW);
+$data = filter_input(INPUT_POST, 'data', FILTER_UNSAFE_RAW);
+$operatore = filter_input(INPUT_POST, 'operatore', FILTER_UNSAFE_RAW);
 // Ottiene l'informazione dalla tabella 'dati'
 $db->where('Cartel', $cartellino);
 $informazione = $db->getOne("dati");
@@ -32,7 +32,11 @@ if (!empty($informazione["Nu"])) {
         }
     }
 }
-
+$repartiOptions = [];
+$reparti = $db->get('reparti');
+foreach ($reparti as $reparto) {
+    $repartiOptions[] = htmlspecialchars($reparto['Nome'], ENT_QUOTES, 'UTF-8');
+}
 // Includi l'header
 require_once BASE_PATH . '/includes/header.php';
 ?>
@@ -99,7 +103,17 @@ require_once BASE_PATH . '/includes/header.php';
     <hr>
 
     <form action="process_save.php" method="post" id="test_form">
-
+        <div class="form-group row">
+            <label for="reparto" class="col-sm-2 col-form-label">Filiera di Provenienza</label>
+            <div class="col-sm-10">
+                <select id="reparto" name="reparto" class="form-control" required>
+                    <option value="">Scegli...</option>
+                    <?php foreach ($repartiOptions as $reparto): ?>
+                        <option value="<?php echo $reparto; ?>"><?php echo $reparto; ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
         <div class="table-responsive">
             <table class="table table-bordered" id="test_table">
                 <thead class="table-info">
