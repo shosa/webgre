@@ -12,6 +12,14 @@ $new_testid = filter_input(INPUT_POST, 'new_testid', FILTER_UNSAFE_RAW);
 $orario = filter_input(INPUT_POST, 'orario', FILTER_UNSAFE_RAW);
 $data = filter_input(INPUT_POST, 'data', FILTER_UNSAFE_RAW);
 $operatore = filter_input(INPUT_POST, 'operatore', FILTER_UNSAFE_RAW);
+$descArticolo = filter_input(INPUT_POST, 'descArticolo', FILTER_UNSAFE_RAW);
+$codArticolo = filter_input(INPUT_POST, 'codArticolo', FILTER_UNSAFE_RAW);
+$new_testid = filter_input(INPUT_POST, 'new_testid', FILTER_UNSAFE_RAW);
+$data = filter_input(INPUT_POST, 'data', FILTER_UNSAFE_RAW);
+$orario = filter_input(INPUT_POST, 'orario', FILTER_UNSAFE_RAW);
+$operatore = filter_input(INPUT_POST, 'operatore', FILTER_UNSAFE_RAW);
+$siglaLinea = filter_input(INPUT_POST, 'siglaLinea', FILTER_UNSAFE_RAW);
+$paia = filter_input(INPUT_POST, 'paia', FILTER_UNSAFE_RAW);
 // Ottiene l'informazione dalla tabella 'dati'
 $db->where('Cartel', $cartellino);
 $informazione = $db->getOne("dati");
@@ -143,10 +151,11 @@ require_once BASE_PATH . '/includes/header.php';
                                 <button type="button" class="btn btn-secondary pen-btn">
                                     <i class="fas fa-pen"></i>
                                 </button>
-                                <input type="hidden" name="test[]" class="test-input">
+                                <input type="hidden" name="test[]" class="test-input" style="text-transform:uppercase"
+                                    required>
                             </td>
                             <td>
-                                <textarea name="note[]" class="form-control"></textarea>
+                                <textarea name="note[]" class="form-control" style="text-transform:uppercase"></textarea>
                             </td>
                             <td>
                                 <button type="button" class="btn btn-light esito-btn" data-value="V">
@@ -155,9 +164,17 @@ require_once BASE_PATH . '/includes/header.php';
                                 <button type="button" class="btn btn-light esito-btn" data-value="X">
                                     <i class="fas fa-times-circle"></i>
                                 </button>
-                                <input type="hidden" name="esito[]" class="esito-input">
+                                <input type="hidden" name="esito[]" class="esito-input" required>
                                 <input type="text" value="<?php echo $cartellino; ?>" name="cartellino" hidden>
                                 <input type="text" value="<?php echo $commessa; ?>" name="commessa" hidden>
+                                <input type="text" value="<?php echo $descArticolo; ?>" name="descArticolo" hidden>
+                                <input type="text" value="<?php echo $codArticolo; ?>" name="codArticolo" hidden>
+                                <input type="text" value="<?php echo $new_testid; ?>" name="new_testid" hidden>
+                                <input type="text" value="<?php echo $data; ?>" name="data" hidden>
+                                <input type="text" value="<?php echo $orario; ?>" name="orario" hidden>
+                                <input type="text" value="<?php echo $operatore; ?>" name="operatore" hidden>
+                                <input type="text" value="<?php echo $siglaLinea; ?>" name="siglaLinea" hidden>
+                                <input type="text" value="<?php echo $paia; ?>" name="paia" hidden>
                             </td>
                             <input type="hidden" name="row_ids[]" class="row-id-input">
                         </tr>
@@ -243,6 +260,7 @@ require_once BASE_PATH . '/includes/header.php';
             button.addEventListener('click', function () {
                 var input = prompt("Inserisci manualmente il test:");
                 if (input) {
+                    input = input.toUpperCase(); // Trasforma il testo in maiuscolo
                     var testInput = this.nextElementSibling;
                     testInput.value = input;
                     this.previousElementSibling.textContent = input;

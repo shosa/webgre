@@ -6,9 +6,6 @@ require_once BASE_PATH . '/includes/auth_validate.php';
 // Ottieni l'istanza di mysqlidb
 $db = getDbInstance();
 
-// Recupera la variabile cartellino dall'URL
-$cartellino = filter_input(INPUT_GET, 'cartellino', FILTER_UNSAFE_RAW);
-
 // Ottieni l'orario corrente
 $orario = date('H:i');
 
@@ -22,13 +19,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Controlla se il valore della calzata non è vuoto
         if (!empty($_POST['calzata'][$i])) {
             $data = array(
+                'testid' => $_POST['new_testid'],
                 'reparto' => $_POST['reparto'],
                 'cartellino' => $_POST['cartellino'],
                 'commessa' => $_POST['commessa'],
+                'cod_articolo' => $_POST['codArticolo'],
+                'articolo' => $_POST['descArticolo'],
                 'calzata' => $_POST['calzata'][$i],
                 'test' => $_POST['test'][$i],
                 'note' => $_POST['note'][$i],
-                'esito' => $_POST['esito'][$i]
+                'esito' => $_POST['esito'][$i],
+                'data' => $_POST['data'], // Non deve essere un array
+                'orario' => $_POST['orario'], // Non deve essere un array
+                'operatore' => $_POST['operatore'], // Non deve essere un array
+                'linea' => $_POST['siglaLinea'], // Non deve essere un array
+                'pa' => $_POST['paia'] // Non deve essere un array
             );
 
             // Debug: verifica il contenuto dell'array $data
@@ -44,6 +49,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $insert_success = false;
                 break;
             }
+        }
+    }
+
+    // Se l'inserimento è riuscito, aggiorna il record nella tabella cq_testid
+    if ($insert_success) {
+        $prev_testid = $_POST['new_testid'] - 1;
+
+        $update_data = array(
+            'ID' => $_POST['new_testid']
+        );
+
+        $db->where('ID', $prev_testid);
+        $updated = $db->update('cq_testid', $update_data);
+
+        if (!$updated) {
+            // Se c'è stato un errore nell'aggiornamento, mostra un messaggio di errore
+            $insert_success = false;
         }
     }
 }

@@ -20,12 +20,12 @@
                     Reportistica</a>
             </li>
             <!-- INIZIO PARTE VISIBILE SOLO ALL'AMMINISTRAZIONE -->
-            <?php if ($_SESSION["admin_type"] !== "admin"): ?>
+          
                 <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="fad fa-list fa-fw"></i>
+                    <a class="nav-link" href="../../functions/quality/read"><i class="fad fa-list fa-fw"></i>
                         Elenco</a>
                 </li>
-            <?php endif; ?>
+           
             <!-- FINE PARTE VISIBILE SOLO ALL'AMMINISTRAZIONE -->
         </ul>
     </li>

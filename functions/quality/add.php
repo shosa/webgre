@@ -54,7 +54,7 @@ require_once BASE_PATH . '/includes/header.php';
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="Codice" class="form-label">Codice Articolo</label>
-                            <input type="text" name="Codice"
+                            <input type="text" name="codArticolo"
                                 value="<?php echo htmlspecialchars($informazione['Articolo'], ENT_QUOTES, 'UTF-8'); ?>"
                                 placeholder="Codice" class="form-control" required id="Codice" readonly>
                             <input type="text" name="Codice" value="<?php echo $descrizioneLinea["descrizione"]; ?>"
@@ -64,7 +64,7 @@ require_once BASE_PATH . '/includes/header.php';
                     <div class="col-md-8">
                         <div class="form-group">
                             <label for="Articolo" class="form-label">Articolo</label>
-                            <input type="text" name="Articolo"
+                            <input type="text" name="descArticolo"
                                 value="<?php echo htmlspecialchars($informazione['Descrizione Articolo'], ENT_QUOTES, 'UTF-8'); ?>"
                                 placeholder="Descrizione Articolo" class="form-control" required id="Articolo" readonly>
                         </div>
@@ -132,6 +132,8 @@ require_once BASE_PATH . '/includes/header.php';
             <input type="hidden" name="data" value="<?php echo $data; ?>">
             <input type="hidden" name="orario" value="<?php echo $orario; ?>">
             <input type="hidden" name="new_testid" value="<?php echo $new_testid; ?>">
+            <input type="hidden" name="siglaLinea" value="<?php echo $informazione["Ln"]; ?>">
+            <input type="hidden" name="paia" value="<?php echo $informazione["Tot"]; ?>">
             <div class="form-group floating-button">
                 <button type="submit" class="btn btn-primary btn-lg">INIZIA TEST <i class="fas fa-play"></i></button>
             </div>
