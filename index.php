@@ -23,12 +23,6 @@ include_once ('includes/header.php');
         </div>
     </div>
     <hr>
-    <?php
-    $db = getDbInstance();
-    $querySettings = "SELECT value FROM settings WHERE item = 'modulo_produzione'";
-    $resultSettings = $db->rawQuery($querySettings);
-    $moduloProduzioneValue = !empty($resultSettings) ? intval($resultSettings[0]["value"]) : 0;
-    ?>
     <div class="row">
         <?php if ($_SESSION['admin_type'] !== 'operatore'): ?>
             <?php if ($_SESSION['admin_type'] !== 'lavorante'):
@@ -36,17 +30,14 @@ include_once ('includes/header.php');
             endif ?>
         <?php endif ?>
     </div>
-
     <!-- TAB RIPARAZIONI solo per LAVORANTE -->
     <div class="row">
         <?php
         if ($tipoUtente == "lavorante") {
-            // Esegui una query SQL per ottenere la somma dei campi richiesti
             include ("includes/dashboard/dash_lavorante.php");
         }
         ?>
     </div>
-
     <div class="row">
         <?php
         if ($tipoUtente == "lavorante"):
