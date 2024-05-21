@@ -40,7 +40,7 @@ require_once BASE_PATH . '/includes/header.php';
                 style="padding:5px; background-color:orange;border-radius:10px;color:White;">
                 <?php echo $nomeLinea; ?>
             </h2>
-            <h2 class="page-header page-action-links text-left">Nuovo Test #<?php echo $new_testid; ?></h2>
+            <h2 class="page-header page-action-links text-left">Nuovo Test a partire da #<?php echo $new_testid; ?></h2>
         </div>
     </div>
     <hr>

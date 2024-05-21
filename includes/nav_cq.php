@@ -10,23 +10,24 @@
                     Nuova</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#"><i class="fad fa-folder-tree"></i>
+                <a class="nav-link" href="../../functions/quality/read"><i class="fad fa-folder-tree"></i>
                     Consulta
                     <span class="badge badge-danger">New</span></a>
-
             </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="../../functions/quality/search"><i class="fad fa-search fa-fw"></i>
+                    Ricerca</a>
+            </li>
+
             <li class="nav-item">
                 <a class="nav-link" href="#"><i class="fad fa-chart-pie"></i>
                     Reportistica</a>
             </li>
             <!-- INIZIO PARTE VISIBILE SOLO ALL'AMMINISTRAZIONE -->
-          
-                <li class="nav-item">
-                    <a class="nav-link" href="../../functions/quality/read"><i class="fad fa-list fa-fw"></i>
-                        Elenco</a>
-                </li>
-           
-            <!-- FINE PARTE VISIBILE SOLO ALL'AMMINISTRAZIONE -->
+
+
+
         </ul>
     </li>
 <?php endif; ?>

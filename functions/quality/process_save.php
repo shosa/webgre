@@ -14,12 +14,15 @@ $insert_success = false;
 
 // Inserisci i dati nel database
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $new_testid = $_POST['new_testid']; // Recupera il valore iniziale di testid
+    $initial_testid = $new_testid; // Salva il valore iniziale per l'aggiornamento
+
     // Esegui un loop su ogni riga inviata dal modulo
     for ($i = 0; $i < count($_POST['calzata']); $i++) {
         // Controlla se il valore della calzata non è vuoto
         if (!empty($_POST['calzata'][$i])) {
             $data = array(
-                'testid' => $_POST['new_testid'],
+                'testid' => $new_testid, // Utilizza il valore corrente di testid
                 'reparto' => $_POST['reparto'],
                 'cartellino' => $_POST['cartellino'],
                 'commessa' => $_POST['commessa'],
@@ -44,6 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($last_id) {
                 // Inserimento riuscito
                 $insert_success = true;
+                $new_testid++; // Incrementa testid per il prossimo inserimento
             } else {
                 // Se c'è stato un errore nell'inserimento, mostra un messaggio di errore
                 $insert_success = false;
@@ -54,13 +58,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Se l'inserimento è riuscito, aggiorna il record nella tabella cq_testid
     if ($insert_success) {
-        $prev_testid = $_POST['new_testid'] - 1;
-
         $update_data = array(
-            'ID' => $_POST['new_testid']
+            'ID' => $new_testid - 1 // Usa l'ultimo valore di testid inserito
         );
 
-        $db->where('ID', $prev_testid);
+        $db->where('ID', $initial_testid - 1); // Usa l'ID del valore iniziale - 1
         $updated = $db->update('cq_testid', $update_data);
 
         if (!$updated) {

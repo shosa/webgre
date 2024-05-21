@@ -61,13 +61,14 @@ $data = $db->get('cq_records');
                             <td><?php echo $record['cod_articolo']; ?></td>
                             <td><?php echo $record['articolo']; ?></td>
                             <td><?php echo $record['calzata']; ?></td>
-                            <td <?php echo ($record['esito'] == 'V') ? 'style=" text-align:center; background-color: #b8ffba; color: green;"' : 'style="text-align:center;background-color: #ffb8c1; color: red; "'; ?>>
-                                <?php echo $record['esito']; ?>
+                            <td <?php echo ($record['esito'] == 'V') ? 'style="text-align:center; background-color: #b8ffba; color: green;"' : 'style="text-align:center;background-color: #ffb8c1; color: red;"'; ?>>
+                                <?php echo ($record['esito'] == 'V') ? '<i class="fas fa-check"></i>' : '<i class="fas fa-times"></i>'; ?>
                             </td>
+
                             <td>
-                                <button class="btn btn-info btn-detail" data-testid="<?php echo $record['testid']; ?>"
+                                <button class="btn btn-primary btn-detail" data-testid="<?php echo $record['testid']; ?>"
                                     data-toggle="modal" data-target="#detailModal">
-                                    <i class="fas fa-search"></i>
+                                    <i class="fal fa-search-plus"></i>
                                 </button>
                             </td>
                         </tr>
