@@ -20,7 +20,7 @@ if ($search_criteria) {
         ->orWhere('linea', '%' . $search_criteria . '%', 'LIKE')
         ->orWhere('reparto', '%' . $search_criteria . '%', 'LIKE')
         ->orWhere('data', '%' . $search_criteria . '%', 'LIKE');
-    
+
     // Recupera i dati dal database solo se i criteri di ricerca sono forniti
     $data = $db->get('cq_records');
 } else {
@@ -53,7 +53,8 @@ if ($search_criteria) {
                     <thead>
                         <tr>
                             <th>N°</th>
-                            <th>Ora</th>
+                            <th>Data</th>
+                            <th>Orario</th>
                             <th>Cartellino</th>
                             <th>Commessa</th>
                             <th>Reparto</th>
@@ -68,6 +69,7 @@ if ($search_criteria) {
                         <?php foreach ($data as $record): ?>
                             <tr>
                                 <td><?php echo $record['testid']; ?></td>
+                                <td><?php echo $record['data']; ?></td>
                                 <td><?php echo $record['orario']; ?></td>
                                 <td><?php echo $record['cartellino']; ?></td>
                                 <td><?php echo $record['commessa']; ?></td>
