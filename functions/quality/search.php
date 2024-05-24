@@ -20,10 +20,12 @@ if ($search_criteria) {
         ->orWhere('linea', '%' . $search_criteria . '%', 'LIKE')
         ->orWhere('reparto', '%' . $search_criteria . '%', 'LIKE')
         ->orWhere('data', '%' . $search_criteria . '%', 'LIKE');
+    
+    // Recupera i dati dal database solo se i criteri di ricerca sono forniti
+    $data = $db->get('cq_records');
+} else {
+    $data = null; // Nessun dato se non ci sono criteri di ricerca
 }
-
-// Recupera i dati dal database
-$data = $db->get('cq_records');
 
 ?>
 
@@ -46,7 +48,7 @@ $data = $db->get('cq_records');
     <hr>
     <div class="row">
         <div class="col-lg-12">
-            <?php if ($data): ?>
+            <?php if ($search_criteria && $data): ?>
                 <table class="table table-striped table-bordered table-condensed">
                     <thead>
                         <tr>
@@ -86,7 +88,7 @@ $data = $db->get('cq_records');
                         <?php endforeach; ?>
                     </tbody>
                 </table>
-            <?php else: ?>
+            <?php elseif ($search_criteria): ?>
                 <div class="alert alert-warning">Nessuna registrazione trovata.</div>
             <?php endif; ?>
         </div>

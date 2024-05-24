@@ -19,7 +19,7 @@ include_once ('includes/header.php');
 <div id="page-wrapper">
     <div class="row">
         <div class="col-lg-6">
-            <h1 class="page-header page-action-links text-left">Benvenuto/a, <?php echo $nome; ?> </h1>
+            <h1 class="page-header page-action-links text-left">Benvenuto/a, <i style="color:blue;"><?php echo $nome; ?> </i></h1>
         </div>
     </div>
     <hr>

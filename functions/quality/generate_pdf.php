@@ -11,6 +11,16 @@ $db = getDbInstance();
 $db->where('data', $date);
 $data = $db->get('cq_records');
 
+// Raggruppa i dati per REPARTO
+$groupedData = [];
+foreach ($data as $record) {
+    $reparto = $record['reparto'];
+    if (!isset($groupedData[$reparto])) {
+        $groupedData[$reparto] = [];
+    }
+    $groupedData[$reparto][] = $record;
+}
+
 // Include la libreria TCPDF
 require_once ('../../assets/tcpdf/tcpdf.php');
 require_once ('../../assets/tcpdf/tcpdf_barcodes_1d.php');
@@ -39,7 +49,6 @@ $pdf->SetFont('helvetica', '', 15);
 
 $pdf->AddPage();
 
-
 // Creazione del barcode
 $barcodeOptions = array('code' => 'C128', 'display' => true, 'scale' => 0.75, 'text' => $date, 'align' => 'C', 'label' => false);
 $barcode = $pdf->write1DBarcode($date, 'C128', '', '', '', 10, 0.3, $barcodeOptions);
@@ -49,40 +58,40 @@ $pdf->Cell(0, 10, 'TEST CONTROLLO QUALITA', 0, 0, 'L');
 $pdf->Cell(0, 10, 'Data: ' . $date, 0, 1, 'R');
 $logoPath = '../../src/img/logo.png'; // Assicurati che il percorso sia corretto
 $pdf->Image($logoPath, 200, 10, 70, '', 'PNG');
-$uniqueCartellini = array();
-$totalPa = 0;
 
-// Calcola la somma totale dei PA
-foreach ($data as $record) {
-    $cartellino = $record['cartellino'];
-    $pa = $record['pa'];
+// Query per ottenere la somma totale dei PA per cartellino univoco
+$query = "SELECT SUM(pa) as totalPa FROM (SELECT DISTINCT cartellino, pa FROM cq_records WHERE data = ?) as distinct_pa";
+$totalPaResult = $db->rawQueryOne($query, array($date));
+$totalPa = $totalPaResult['totalPa'] ?? 0;
 
-    if (!isset($uniqueCartellini[$cartellino])) {
-        $uniqueCartellini[$cartellino] = 0;
-    }
-
-    $uniqueCartellini[$cartellino] += $pa;
-}
-
-$totalPa = array_sum($uniqueCartellini); // Somma totale dei PA
 $negativeEsiti = 0;
-
+$difettiEsiti = 0;
 foreach ($data as $record) {
+    if ($record['esito'] === 'V') {
+        $difettiEsiti++;
+    }
     if ($record['esito'] === 'X') {
         $negativeEsiti++;
+        $difettiEsiti++;
     }
 }
 if ($totalPa > 0) {
     $negativePercentage = ($negativeEsiti / $totalPa) * 100;
+    $difettiPercentage = ($difettiEsiti / $totalPa) * 100;
 } else {
     $negativePercentage = 0; // Se non ci sono pa, la percentuale di esiti negativi è 0%
+    $difettiPercentage = 0;
 }
 
+$pdf->SetFont('helvetica', '', 15);
+$pdf->SetFillColor(200, 200, 200); // Colore grigio chiaro per lo sfondo
+$pdf->Cell(0, 10, 'RIEPILOGO', 1, 1, 'L', true); // 1 per il bordo e true per il riempimento
+$pdf->Ln(2);
 $pdf->SetFont('helvetica', '', 12);
 // Aggiungi la percentuale di scarto dopo la riga vuota
-$pdf->Cell(0, 10, 'Percentuale di scarto registrata: ' . $negativePercentage . '%', 0, 1, 'L');
+$pdf->Cell(0, 10, 'Percentuale TOTALE di scarto registrata: ' . number_format($negativePercentage, 2) . '%', 0, 1, 'L');
+$pdf->Cell(0, 10, 'Percentuale TOTALE di difetti registrata: ' . number_format($difettiPercentage, 2) . '%', 0, 1, 'L');
 
-$pdf->SetFont('helvetica', '', 12);
 // Calcola la larghezza massima per ogni colonna
 $colWidths = array_fill(0, 7, 0); // Array inizializzato con 7 colonne
 $columnTitles = array('N° TEST', 'CARTELLINO/COMMESSA', 'ARTICOLO', 'CALZATA', 'ORA', 'TEST', 'ANNOTAZIONI', 'ESITO');
@@ -103,51 +112,60 @@ foreach ($data as $record) {
     $colWidths[7] = max($colWidths[7], $pdf->GetStringWidth($record['esito']));
 }
 
-// Disegna la tabella
 $pdf->SetFont('helvetica', '', 8);
 $pdf->SetFillColor(191, 245, 243);
 $pdf->SetTextColor(0);
 $pdf->SetDrawColor(0, 0, 0);
 $pdf->SetLineWidth(0.1);
 $pdf->setFont('', 'B');
-$fill = false; // Variabile di controllo per il colore di sfondo delle righe
 
-foreach ($colWidths as $index => $width) {
-    // Se l'intestazione è "ESITO", la larghezza deve essere doppia
-    $cellWidth = $index === 7 ? $width * 2 : $width;
-    $pdf->Cell($cellWidth, 10, $columnTitles[$index], 1, 0, 'C', 1); // Titoli delle colonne
-}
-$pdf->Ln();
-$pdf->SetFillColor(255, 255, 255);
-$pdf->SetTextColor(0);
-$pdf->setFont('', '');
-
-foreach ($data as $record) {
-    // Imposta il colore di sfondo della riga
-    $pdf->SetFillColor($fill ? 240 : 255);
-    $pdf->Cell($colWidths[0], 10, $record['testid'], 1, 0, 'C', $fill);
-    $pdf->Cell($colWidths[1], 10, $record['cartellino'] . ' / ' . $record['commessa'], 1, 0, 'C', $fill);
-    $pdf->Cell($colWidths[2], 10, $record['articolo'], 1, 0, 'C', $fill);
-    $pdf->Cell($colWidths[3], 10, $record['calzata'], 1, 0, 'C', $fill);
-    $pdf->Cell($colWidths[4], 10, $record['orario'], 1, 0, 'C', $fill);
-    $pdf->MultiCell($colWidths[5], 10, $record['test'], 1, 'C', $fill, 0);
-    $pdf->MultiCell($colWidths[6], 10, $record['note'], 1, 'C', $fill, 0);
-    // Aggiungiamo due celle sotto ESITO
-    if ($record['esito'] === 'V') {
-        $pdf->Cell($colWidths[7], 10, '', 1, 0, 'C', $fill);
-        $pdf->Cell($colWidths[7], 10, 'V', 1, 1, 'C', $fill);
-    } elseif ($record['esito'] === 'X') {
-        $pdf->Cell($colWidths[7], 10, 'X', 1, 0, 'C', $fill);
-        $pdf->Cell($colWidths[7], 10, '', 1, 1, 'C', $fill);
-    } else {
-        $pdf->Cell($colWidths[7], 10, '', 1, 0, 'C', $fill);
-        $pdf->Cell($colWidths[7], 10, '', 1, 1, 'C', $fill);
+foreach ($groupedData as $reparto => $records) {
+    // Aggiungi l'intestazione del reparto
+    $pdf->AddPage();
+    $pdf->SetFont('helvetica', '', 14);
+    $pdf->Cell(0, 10, 'Reparto: ' . $reparto, 0, 1, 'L');
+    $pdf->Ln();
+    $pdf->SetFont('helvetica', '', 8);
+    // Disegna l'intestazione della tabella
+    $pdf->SetFillColor(191, 245, 243);
+    foreach ($colWidths as $index => $width) {
+        // Se l'intestazione è "ESITO", la larghezza deve essere doppia
+        $cellWidth = $index === 7 ? $width * 2 : $width;
+        $pdf->Cell($cellWidth, 10, $columnTitles[$index], 1, 0, 'C', 1); // Titoli delle colonne
     }
-    // Cambia il colore di sfondo per la riga successiva
-    $fill = !$fill;
+    $pdf->Ln();
+    $pdf->SetFillColor(255, 255, 255);
+    $pdf->SetTextColor(0);
+    $pdf->setFont('', '');
+
+    $fill = false; // Variabile di controllo per il colore di sfondo delle righe
+
+    foreach ($records as $record) {
+        // Imposta il colore di sfondo della riga
+        $pdf->SetFillColor($fill ? 240 : 255);
+        $pdf->Cell($colWidths[0], 10, $record['testid'], 1, 0, 'C', $fill);
+        $pdf->Cell($colWidths[1], 10, $record['cartellino'] . ' / ' . $record['commessa'], 1, 0, 'C', $fill);
+        $pdf->Cell($colWidths[2], 10, $record['articolo'], 1, 0, 'C', $fill);
+        $pdf->Cell($colWidths[3], 10, $record['calzata'], 1, 0, 'C', $fill);
+        $pdf->Cell($colWidths[4], 10, $record['orario'], 1, 0, 'C', $fill);
+        $pdf->MultiCell($colWidths[5], 10, $record['test'], 1, 'C', $fill, 0);
+        $pdf->MultiCell($colWidths[6], 10, $record['note'], 1, 'C', $fill, 0);
+        // Aggiungiamo due celle sotto ESITO
+        if ($record['esito'] === 'V') {
+            $pdf->Cell($colWidths[7], 10, '', 1, 0, 'C', $fill);
+            $pdf->Cell($colWidths[7], 10, 'V', 1, 1, 'C', $fill);
+        } elseif ($record['esito'] === 'X') {
+            $pdf->Cell($colWidths[7], 10, 'X', 1, 0, 'C', $fill);
+            $pdf->Cell($colWidths[7], 10, '', 1, 1, 'C', $fill);
+        } else {
+            $pdf->Cell($colWidths[7], 10, '', 1, 0, 'C', $fill);
+            $pdf->Cell($colWidths[7], 10, '', 1, 1, 'C', $fill);
+        }
+        // Cambia il colore di sfondo per la riga successiva
+        $fill = !$fill;
+    }
 }
+
 // Output del PDF
-
-
-
-$pdf->Output('CQ DEL' . $record['data'] . '.pdf', 'I');
+$pdf->Output('CQ DEL' . $date . '.pdf', 'I');
+?>
